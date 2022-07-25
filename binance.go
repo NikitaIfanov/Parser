@@ -4,10 +4,10 @@ import (
 	"fmt"
 )
 
-func (p Pair)GetBinance() {
+func (p Pair) GetBinance() {
 	body := GetJson("https://api.binance.com/api/v3/ticker/price")
 
-	targets := []MyJsonBin{}
+	targets := []BinanceJson{}
 
 	JsonUnmarshal(body, &targets)
 
@@ -19,7 +19,7 @@ func (p Pair)GetBinance() {
 	}
 }
 
-type MyJsonBin struct {
+type BinanceJson struct {
 	Symbol string `json:"symbol"`
 	Price  string `json:"price"`
 }

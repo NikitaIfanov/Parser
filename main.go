@@ -18,6 +18,7 @@ func main() {
 		p.GetBinance()
 		p.GetHuobi()
 		p.GetOkex()
+		p.GetByBit()
 
 		time.Sleep(10 * time.Second)
 
@@ -50,6 +51,7 @@ type Pair struct {
 	Binance string
 	Huobi   string
 	Okex    string
+	ByBit   string
 }
 
 func EnterPair() Pair {
@@ -60,6 +62,7 @@ func EnterPair() Pair {
 		Binance: fmt.Sprintf("%s%s", FirstExchange, SecondExchange),
 		Huobi:   fmt.Sprintf("%s%s", strings.ToLower(FirstExchange), strings.ToLower(SecondExchange)),
 		Okex:    fmt.Sprintf("%s-%s", FirstExchange, SecondExchange),
+		ByBit:   fmt.Sprintf("%s%s", FirstExchange, SecondExchange),
 	}
 
 }
