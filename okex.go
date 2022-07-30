@@ -1,27 +1,26 @@
 package main
 
-import (
-	"fmt"
-)
-
-func (p Pair) GetOkex() {
+func (p Pair) GetOkex() DataFloat {
 	body := GetJson("https://www.okx.com/api/v5/market/tickers/?instType=SPOT")
 
-	targets := OkexJson{}
+	targetsOkex := OkexJson{}
 
-	JsonUnmarshal(body, &targets)
-
-	for _, t := range targets.Data {
+	JsonUnmarshal(body, &targetsOkex)
+	okex := DataFloat{Flag: Okex}
+	for _, t := range targetsOkex.Data {
 		if t.Symbol == p.Okex {
-			fmt.Println("Okex" + " " + t.Symbol + " = " + t.Price)
+			okex.BuyPrice = ParseFloat(t.BuyPrice)
+			okex.SalePrice = ParseFloat(t.SalePrice)
 			break
 		}
 	}
+	return okex
 }
 
 type OkexJson struct {
 	Data []struct {
-		Symbol string `json:"instId"`
-		Price  string `json:"askPx"`
-	} `json:"data"`
+		Symbol    string `json:"instId"`
+		BuyPrice  string `json:"bidPx"`
+		SalePrice string `json:"askPx"`
+	}
 }

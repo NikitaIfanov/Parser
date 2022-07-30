@@ -6,23 +6,46 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
 
+const (
+	Binance = 1
+	Huobi   = 2
+	Okex    = 3
+	ByBit   = 4
+)
+
 func main() {
 	p := EnterPair()
-
+	var count int
 	for {
+		Data := make([]DataFloat, 0)
 
-		p.GetBinance()
-		p.GetHuobi()
-		p.GetOkex()
-		p.GetByBit()
+		Data = append(Data, p.GetBinance(), p.GetHuobi(), p.GetOkex(), p.GetByBit())
+		fmt.Println(Data)
+		MaxSale := Data[0]
+		MinBuy := Data[0]
+		for _, num := range Data {
+			switch {
+			case num.SalePrice > MaxSale.SalePrice:
+				MaxSale = num
+			case num.BuyPrice < MinBuy.BuyPrice:
+				MinBuy = num
+			}
+		}
+		fmt.Println(MaxSale, MinBuy)
+		if MaxSale.SalePrice-MinBuy.BuyPrice > 20 {
+			count++
+			fmt.Println(count)
+		}
 
-		time.Sleep(10 * time.Second)
+		time.Sleep(1 * time.Second)
 
 	}
+
 }
 
 func GetJson(url string) []byte {
@@ -47,13 +70,6 @@ func JsonUnmarshal(body []byte, targets interface{}) {
 	}
 }
 
-type Pair struct {
-	Binance string
-	Huobi   string
-	Okex    string
-	ByBit   string
-}
-
 func EnterPair() Pair {
 	var FirstExchange, SecondExchange string
 	fmt.Println("Enter a Cryptocurrency Pair Example:'BTC USDT'")
@@ -65,4 +81,25 @@ func EnterPair() Pair {
 		ByBit:   fmt.Sprintf("%s%s", FirstExchange, SecondExchange),
 	}
 
+}
+
+func ParseFloat(s string) float64 {
+	data, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return data
+}
+
+type DataFloat struct {
+	Flag      int
+	BuyPrice  float64
+	SalePrice float64
+}
+
+type Pair struct {
+	Binance string
+	Huobi   string
+	Okex    string
+	ByBit   string
 }

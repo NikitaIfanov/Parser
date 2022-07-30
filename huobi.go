@@ -1,27 +1,26 @@
 package main
 
-import (
-	"fmt"
-)
-
-func (p Pair) GetHuobi() {
+func (p Pair) GetHuobi() DataFloat {
 	body := GetJson("https://api.huobi.pro/market/tickers")
 
-	targets := HuobiJson{}
+	targetsHuobi := HuobiJson{}
 
-	JsonUnmarshal(body, &targets)
-
-	for _, t := range targets.Data {
+	JsonUnmarshal(body, &targetsHuobi)
+	huobi := DataFloat{Flag: Huobi}
+	for _, t := range targetsHuobi.Data {
 		if t.Symbol == p.Huobi {
-			fmt.Println("Huobi" + " " + t.Symbol + " = " + fmt.Sprintf("%f", t.Price))
+			huobi.BuyPrice = t.BuyPrice
+			huobi.SalePrice = t.SalePrice
 			break
 		}
 	}
+	return huobi
 }
 
 type HuobiJson struct {
 	Data []struct {
-		Symbol string  `json:"symbol"`
-		Price  float64 `json:"ask"`
+		Symbol    string  `json:"symbol"`
+		BuyPrice  float64 `json:"bid"`
+		SalePrice float64 `json:"ask"`
 	}
 }

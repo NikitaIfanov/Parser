@@ -1,26 +1,28 @@
 package main
 
-import "fmt"
-
-func (p Pair) GetByBit() {
+func (p Pair) GetByBit() DataFloat {
 
 	body := GetJson("https://api.bybit.com/v2/public/tickers")
 
-	targets := ByBitJson{}
+	targetsByBit := ByBitJson{}
 
-	JsonUnmarshal(body, &targets)
-
-	for _, t := range targets.Data {
+	JsonUnmarshal(body, &targetsByBit)
+	byBit := DataFloat{Flag: ByBit}
+	for _, t := range targetsByBit.Data {
 		if t.Symbol == p.ByBit {
-			fmt.Println("ByBit" + " " + t.Symbol + " = " + t.Price)
+			byBit.BuyPrice = ParseFloat(t.BuyPrice)
+			byBit.SalePrice = ParseFloat(t.SalePrice)
 			break
+
 		}
 	}
+	return byBit
 }
 
 type ByBitJson struct {
 	Data []struct {
-		Symbol string `json:"symbol"`
-		Price  string `json:"ask_price"`
+		Symbol    string `json:"symbol"`
+		BuyPrice  string `json:"bid_price"`
+		SalePrice string `json:"ask_price"`
 	} `json:"result"`
 }

@@ -1,25 +1,25 @@
 package main
 
-import (
-	"fmt"
-)
+func (p Pair) GetBinance() DataFloat {
+	body := GetJson("https://api.binance.com/api/v3/ticker/bookTicker")
 
-func (p Pair) GetBinance() {
-	body := GetJson("https://api.binance.com/api/v3/ticker/price")
+	targetsBinance := []BinanceJson{}
 
-	targets := []BinanceJson{}
-
-	JsonUnmarshal(body, &targets)
-
-	for _, t := range targets {
+	JsonUnmarshal(body, &targetsBinance)
+	binance := DataFloat{Flag: Binance}
+	for _, t := range targetsBinance {
 		if t.Symbol == p.Binance {
-			fmt.Println("Binance" + " " + t.Symbol + " = " + t.Price)
+			binance.BuyPrice = ParseFloat(t.BuyPrice)
+			binance.SalePrice = ParseFloat(t.SalePrice)
 			break
 		}
+
 	}
+	return binance
 }
 
 type BinanceJson struct {
-	Symbol string `json:"symbol"`
-	Price  string `json:"price"`
+	Symbol    string `json:"symbol"`
+	BuyPrice  string `json:"bidPrice"`
+	SalePrice string `json:"askPrice"`
 }
