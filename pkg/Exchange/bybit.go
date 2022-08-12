@@ -1,21 +1,18 @@
-package main
+package Exchange
 
 func (p Pair) GetByBit() DataFloat {
 
-	body := GetJson("https://api.bybit.com/v2/public/tickers")
+	body := GetJson("https://api.bybit.com/v2/public/tickers?symbol=" + p.ByBit)
 
 	targetsByBit := ByBitJson{}
 
 	JsonUnmarshal(body, &targetsByBit)
-	byBit := DataFloat{Flag: ByBit}
-	for _, t := range targetsByBit.Data {
-		if t.Symbol == p.ByBit {
-			byBit.BuyPrice = ParseFloat(t.BuyPrice)
-			byBit.SalePrice = ParseFloat(t.SalePrice)
-			break
-
-		}
+	byBit := DataFloat{
+		Flag:      ByBit,
+		BuyPrice:  ParseFloat(targetsByBit.Data[0].BuyPrice),
+		SalePrice: ParseFloat(targetsByBit.Data[0].SalePrice),
 	}
+
 	return byBit
 }
 

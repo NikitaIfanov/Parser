@@ -1,4 +1,4 @@
-package main
+package Exchange
 
 func (p Pair) GetHuobi() DataFloat {
 	body := GetJson("https://api.huobi.pro/market/tickers")
