@@ -1,0 +1,4 @@
+go.mod
+*pages
+*exec
+/main
